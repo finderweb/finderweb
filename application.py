@@ -4,7 +4,7 @@ import json
 app = Flask(__name__)
 
 
-@app.route("/api/signup")
+@app.route("/api/signup", ['post'])
 def signup_mock():
     return json.dumps({
         "name": "rahul",
