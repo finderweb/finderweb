@@ -3,7 +3,7 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route("api/signup")
+@app.route("/api/signup")
 def signup_mock():
     return {
         "name": "rahul",
@@ -11,7 +11,7 @@ def signup_mock():
     }
 
 
-@app.route("api/contacts")
+@app.route("/api/contacts")
 def contacts_mock():
     return {
         "name": "rahul",
@@ -19,7 +19,7 @@ def contacts_mock():
     }
 
 
-@app.route("api/search")
+@app.route("/api/search")
 def search_mock():
     return {
         "sourceNumber": "07897580575",
