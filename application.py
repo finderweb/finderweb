@@ -1,27 +1,28 @@
 from flask import Flask
+import json
 
 app = Flask(__name__)
 
 
 @app.route("/api/signup")
 def signup_mock():
-    return {
+    return json.dumps({
         "name": "rahul",
         "number": "7897580575"
-    }
+    })
 
 
 @app.route("/api/contacts")
 def contacts_mock():
-    return {
+    return json.dumps({
         "name": "rahul",
         "number": "7897580575"
-    }
+    })
 
 
 @app.route("/api/search")
 def search_mock():
-    return {
+    return json.dumps({
         "sourceNumber": "07897580575",
         "sourceName": "Rahul",
         "destinationNumber": "09210022557",
@@ -48,9 +49,12 @@ def search_mock():
                 "order": 2
             }
         ]
-    }
+    })
 
 
 @app.route("/")
 def hello():
     return "Hello World!"
+
+if __name__ == "__main__":
+    app.run()
