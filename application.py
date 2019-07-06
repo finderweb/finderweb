@@ -15,7 +15,7 @@ def signup_mock():
 @app.route("/api/contacts", methods=['POST', 'GET'])
 def contacts_mock():
     requestJson = request.json;
-    return requestJson
+    return json.dumps(requestJson)
     # return json.dumps({
     #     "name": "rahul",
     #     # "number": "7897580575"
