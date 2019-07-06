@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import json
 
 app = Flask(__name__)
@@ -12,12 +12,14 @@ def signup_mock():
     })
 
 
-@app.route("/api/contacts")
+@app.route("/api/contacts", methods=['POST', 'GET'])
 def contacts_mock():
-    return json.dumps({
-        "name": "rahul",
-        "number": "7897580575"
-    })
+    requestJson = request.json;
+    return requestJson
+    # return json.dumps({
+    #     "name": "rahul",
+    #     # "number": "7897580575"
+    # })
 
 
 @app.route("/api/search")
