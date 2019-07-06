@@ -24,7 +24,6 @@ def contacts_mock():
 
 @app.route("/api/search")
 def search_mock():
-    print "Search_mock called"
     return json.dumps({
         "sourceNumber": "07897580575",
         "sourceName": "Rahul",
@@ -57,7 +56,6 @@ def search_mock():
 
 @app.route("/")
 def hello():
-    print "hello world called"
     return "Hello World!"
 
 
