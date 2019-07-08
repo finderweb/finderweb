@@ -16,10 +16,6 @@ def signup_mock():
 def contacts_mock():
     requestJson = request.json;
     return json.dumps(requestJson)
-    # return json.dumps({
-    #     "name": "rahul",
-    #     # "number": "7897580575"
-    # })
 
 
 @app.route("/api/search")
@@ -58,6 +54,12 @@ def search_mock():
 def hello():
     return "Hello World!"
 
+def connectDB():
+    import pyodbc
+    cnxn = pyodbc.connect('sqlserver://finderdb.database.windows.net:1433;database=finderdb;user=rax@finderdb;password=;Px{B?c}NFz3]JM5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;')
+
+
 
 if __name__ == "__main__":
+    connectDB()
     app.run()
