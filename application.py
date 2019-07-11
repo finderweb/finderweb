@@ -1,20 +1,49 @@
 from flask import Flask, request
 import json
 
+from database import init_db
+from user import is_user_present, insert_user
+
+db_connection = None
 app = Flask(__name__)
 
 
-@app.route("/api/signup", methods=['POST'])
-def signup_mock():
+def throw_error(code, success, message):
     return json.dumps({
-        "name": "rahul",
-        "number": "7897580575"
+        code: code,
+        success: success,
+        message: message
     })
 
 
+def is_key_present():
+    pass
+
+
+def return_json(mp):
+    return json.dumps(mp)
+
+
+@app.route("/api/signup", methods=['POST'])
+def signup():
+    request_json = request.json
+
+    if "name" not in request_json or request_json["name"] is None:
+        return throw_error(-1, False, "Name is None")
+    else:
+        name = request_json["name"]
+
+    if "number" not in request_json or request_json["number"] is None:
+        return throw_error(-1, False, "Phone Number is None")
+    else:
+        number = request_json["number"]
+
+    return return_json(insert_user(name=name, number=number))
+
+
 @app.route("/api/contacts", methods=['POST', 'GET'])
-def contacts_mock():
-    requestJson = request.json;
+def contacts():
+    requestJson = request.json
     return json.dumps(requestJson)
 
 
@@ -54,12 +83,13 @@ def search_mock():
 def hello():
     return "Hello World!"
 
-def connectDB():
-    import pyodbc
-    cnxn = pyodbc.connect('sqlserver://finderdb.database.windows.net:1433;database=finderdb;user=rax@finderdb;password=;Px{B?c}NFz3]JM5;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;')
 
-
+# def connectDB():
+    # import pyodbc
+    # cnxn = pyodbc.connect('sqlserver://finderdb.database.windows.net:1433;database=finderdb;user=rax@finderdb;password=;;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;')
+    # return cnxn
 
 if __name__ == "__main__":
-    connectDB()
+    global db_connection
+    db_connection = init_db()
     app.run()
