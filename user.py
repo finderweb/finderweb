@@ -9,7 +9,7 @@ def is_user_present(phone):
         cursor.execute('select * from ' + db + '.dbo.' + 'UserNode')
         for row in cursor:
             print(row)
-    return True
+            return row
 
 
 def insert_user(number, name, database, force=False):
