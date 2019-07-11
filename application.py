@@ -81,8 +81,8 @@ def search_mock():
 
 @app.route("/")
 def hello():
-    return is_user_present()
-    # return "Hello World!"
+    return is_user_present("")
+    # return "Hello World!`
 
 
 # def connectDB():
@@ -92,5 +92,5 @@ def hello():
 
 if __name__ == "__main__":
     db_connection = init_db()
-    is_user_present()
+    is_user_present("")
     app.run()
