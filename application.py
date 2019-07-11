@@ -90,6 +90,5 @@ def hello():
     # return cnxn
 
 if __name__ == "__main__":
-    global db_connection
     db_connection = init_db()
     app.run()
