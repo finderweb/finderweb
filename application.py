@@ -38,7 +38,7 @@ def signup():
     else:
         number = request_json["number"]
 
-    return return_json(insert_user(name=name, number=number))
+    return return_json(insert_user(name=name, number=number, database=db_connection))
 
 
 @app.route("/api/contacts", methods=['POST', 'GET'])
@@ -91,4 +91,5 @@ def hello():
 
 if __name__ == "__main__":
     db_connection = init_db()
+    is_user_present()
     app.run()
