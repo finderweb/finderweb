@@ -47,7 +47,6 @@ def insert_user(number, name, self_signed=True):
             cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
                            self_signed)
     except:
-        print "Error inserting the fields into the database"
         return False, None
     return is_user_present(number)[1]
 
