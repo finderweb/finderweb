@@ -1,43 +1,20 @@
 import os
 import pyodbc
 import sys
+from contextlib import contextmanager
 
-dbUrl = os.environ['dbUrl']
-# 'sqlserver://finderdb.database.windows.net'
-db = os.environ['db']
-# 'finderdb'
-dbUser = os.environ['dbUser']
-# 'rax@finderdb'
-dbUserPassword = os.environ['dbUserPassword']
-connection_string = dbUrl + ':1433;database=' \
-                    + db + ';user=' \
-                    + dbUser + ';password=;' \
-                    + dbUserPassword + ';encrypt=true;' \
-                                       'trustServerCertificate=false;' \
-                                       'hostNameInCertificate=*.database.windows.net;loginTimeout=30;'
+server = os.environ['dbUrl']
+database = os.environ['db']
+username = os.environ['dbUser']
+password = os.environ['dbUserPassword']
+driver = '{ODBC Driver 17 for SQL Server}'
+connection_str = 'DRIVER=' + driver + ';SERVER=' + server + \
+                 ';PORT=1433;DATABASE=' + database + ';UID=' + username + ';PWD=' + password
 
 
-def init_db():
-    connection = pyodbc.connect(dbUrl
-                                + ':1433;database='
-                                + db + ';user='
-                                + dbUser + ';password=;'
-                                + dbUserPassword + ';encrypt=true;'
-                                                   'trustServerCertificate=false;'
-                                                   'hostNameInCertificate=*.database.windows.net;loginTimeout=30;')
-    return connection
-
-
-def storeContacts():
-    pass
-
-
-def readContacts():
-    pass
-
-
+@contextmanager
 def open_db_connection(commit=False):
-    connection = pyodbc.connect(connection_string)
+    connection = pyodbc.connect(connection_str)
     cursor = connection.cursor()
     try:
         yield cursor
@@ -53,8 +30,3 @@ def open_db_connection(commit=False):
             cursor.execute("ROLLBACK")
     finally:
         connection.close()
-#
-# if __name__ == "__main__":
-#     initDb()
-
-# Once the value are read, I will start doing somethint

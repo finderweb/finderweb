@@ -1,10 +1,8 @@
 from flask import Flask, request
 import json
 
-from database import init_db
-from user import is_user_present, insert_user
+from user import insert_user, insert_contacts, search_mutual
 
-db_connection = None
 app = Flask(__name__)
 
 
@@ -16,10 +14,6 @@ def throw_error(code, success, message):
     })
 
 
-def is_key_present():
-    pass
-
-
 def return_json(mp):
     return json.dumps(mp)
 
@@ -27,70 +21,47 @@ def return_json(mp):
 @app.route("/api/signup", methods=['POST'])
 def signup():
     request_json = request.json
-
     if "name" not in request_json or request_json["name"] is None:
         return throw_error(-1, False, "Name is None")
     else:
         name = request_json["name"]
-
     if "number" not in request_json or request_json["number"] is None:
         return throw_error(-1, False, "Phone Number is None")
     else:
         number = request_json["number"]
-
     return return_json(insert_user(name=name, number=number, database=db_connection))
 
 
 @app.route("/api/contacts", methods=['POST', 'GET'])
 def contacts():
-    requestJson = request.json
-    return json.dumps(requestJson)
+    request_json = request.json
+    if "user" not in request_json or request_json["user"] is None:
+        return throw_error(-1, False, "User is not present")
+    if "contacts" not in request_json or request_json["contacts"] is None:
+        return throw_error(-1, False, "Contacts are not present")
+    user = request_json["user"]
+    name, number = user["name"], user["number"]
+    if number is None:
+        return throw_error(-1, False, "Number is not present")
+    contactslist = request_json["contacts"]
+    if contactslist is None:
+        return throw_error(-1, False, "Contact list is empty")
+    return json.dumps(insert_contacts(user, contactslist))
 
 
-@app.route("/api/search")
+@app.route("/api/search", methods=['GET'])
 def search_mock():
-    return json.dumps({
-        "sourceNumber": "07897580575",
-        "sourceName": "Rahul",
-        "destinationNumber": "09210022557",
-        "destinationName": "Papa",
-        "edges": [
-            {
-                "nodeNumber": "07897580575",
-                "contactName": "Rahul",
-                "order": 0
-            },
-            {
-                "nodeNumber": "07897580575",
-                "contactName": "Rahul Bansal",
-                "order": 1
-            },
-            {
-                "nodeNumber": "07897580575",
-                "contactName": "Rahul 2",
-                "order": 3
-            },
-            {
-                "nodeNumber": "0897580575",
-                "contactName": "Rahul 3",
-                "order": 2
-            }
-        ]
-    })
+    source_number = request.args.get('source')
+    destination_number = request.args.get('destination')
+    if source_number is None or destination_number is None:
+        return throw_error(-1, False, "Source or Destination number not mentioned")
+    return json.dumps(search_mutual(source_number, destination_number))
 
 
 @app.route("/")
 def hello():
-    return is_user_present("")
-    # return "Hello World!`
+    return "Hello There!!"
 
-
-# def connectDB():
-    # import pyodbc
-    # cnxn = pyodbc.connect('sqlserver://finderdb.database.windows.net:1433;database=finderdb;user=rax@finderdb;password=;;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;')
-    # return cnxn
 
 if __name__ == "__main__":
-    db_connection = init_db()
-    is_user_present("")
     app.run()
