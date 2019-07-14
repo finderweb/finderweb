@@ -36,20 +36,29 @@ def insert_edge(user, contact):
 def upsert(contact):
     is_present, user = is_user_present(contact["number"])
     if not is_present:
-        insert_user(contact["number"], contact["name"], self_signed=False)
+        insert_user_util(contact["number"], contact["name"], self_signed=False)
+
+
+def insert_user_util(name, number, self_signed):
+    with open_db_connection(True) as cursor:
+        cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
+                       self_signed)
 
 
 def insert_user(number, name, self_signed=True):
     if len(number) != 10:
         raise Exception("Phone Number must have length equal to 10")
-    try:
+    is_present, user = is_user_present(number)
+    if not is_present:
         with open_db_connection(True) as cursor:
             cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
                            self_signed)
-    except:
-        pass
-        # return False, {}
-    return {"number": number, "name": name}
+    else:
+        if not user["self_signed"]:
+            with open_db_connection(True) as cursor:
+                cursor.execute("update finderdb.dbo.userNode set self_singed=1 and name = ? where number like ?", name,
+                               number)
+    return {"number": number, "name": name, "self_signed": True}
     # return is_user_present(number)
 
 

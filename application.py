@@ -62,6 +62,9 @@ def search_mock():
 def hello():
     return "Hello There!!"
 
+@app.route("/")
+def has_user_signup():
+
 
 if __name__ == "__main__":
     app.run()
