@@ -83,7 +83,7 @@ def search_mutual(source_number, destination_number, length=1):
             "destinationNumber": destination_number,
             "edges": []
         }]
-    return results
+    return {"results": results}
 
 
 def get_result_object(source_number, destination_number, edges):
