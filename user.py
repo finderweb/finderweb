@@ -23,9 +23,10 @@ def has_user_signup(number):
     is_present, user = is_user_present(number)
     if not is_present:
         return {"number": number, "signedUp": False}
-    if user["self_signed"]:
+    if user["selfSigned"]:
         return {"number": number, "signedUp": True}
     return {"number": number, "signedUp": False}
+
 
 def insert_contacts(user, contacts):
     for contact in contacts:
@@ -62,11 +63,11 @@ def insert_user(number, name, self_signed=True):
             cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
                            self_signed)
     else:
-        if not user["self_signed"]:
+        if not user["selfSigned"]:
             with open_db_connection(True) as cursor:
                 cursor.execute("update finderdb.dbo.userNode set self_singed=1 and name = ? where number like ?", name,
                                number)
-    return {"number": number, "name": name, "self_signed": True}
+    return {"number": number, "name": name, "selfSigned": True}
     # return is_user_present(number)
 
 
