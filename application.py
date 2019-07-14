@@ -1,7 +1,7 @@
 from flask import Flask, request
 import json
 
-from user import insert_user, insert_contacts, search_mutual
+from user import insert_user, insert_contacts, search_mutual, has_user_signup
 
 app = Flask(__name__)
 
@@ -62,8 +62,13 @@ def search_mock():
 def hello():
     return "Hello There!!"
 
-@app.route("/")
-def has_user_signup():
+
+@app.route("/api/signup", methods=['GET'])
+def user_signup():
+    number = request.args.get('number')
+    if number is None or len(number) != 10:
+        throw_error(-1, False, "Number can not be empty")
+    return json.dumps(has_user_signup(number))
 
 
 if __name__ == "__main__":

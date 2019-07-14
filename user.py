@@ -19,6 +19,14 @@ def is_user_present(number):
         }
 
 
+def has_user_signup(number):
+    is_present, user = is_user_present(number)
+    if not is_present:
+        return {"number": number, "signedUp": False}
+    if user["self_signed"]:
+        return {"number": number, "signedUp": True}
+    return {"number": number, "signedUp": False}
+
 def insert_contacts(user, contacts):
     for contact in contacts:
         insert_edge(user, contact)
