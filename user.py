@@ -47,8 +47,10 @@ def insert_user(number, name, self_signed=True):
             cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
                            self_signed)
     except:
-        return False, None
-    return is_user_present(number)[1]
+        pass
+        # return False, {}
+    return {"number": number, "name": name}
+    # return is_user_present(number)
 
 
 def search_mutual(source_number, destination_number, length=1):

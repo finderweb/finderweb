@@ -29,7 +29,7 @@ def signup():
         return throw_error(-1, False, "Phone Number is None")
     else:
         number = request_json["number"]
-    return return_json(insert_user(name=name, number=number, database=db_connection))
+    return return_json(insert_user(name=name, number=number))
 
 
 @app.route("/api/contacts", methods=['POST', 'GET'])
