@@ -1,0 +1,41 @@
+create Table UserNode (
+    user_id INT NOT NULL IDENTITY(1,1),
+    name VARCHAR(255),
+    number VARCHAR(14),
+    self_signed bit DEFAULT 1,
+    contacts_synced bit DEFAULT 0,
+    created_on DATETIME DEFAULT GETDATE(),
+    modified_on DATETIME,
+    PRIMARY KEY(number)
+) AS NODE;
+
+create Table knowsEdge (
+   name VARCHAR(255)
+   source_destination VARCHAR(25)
+   PRIMARY Key(source_destination)
+) as Edge;
+
+create table users(
+    number VARCHAR(15),
+    name VARCHAR(255),
+    created_on DATETIME DEFAULT GETDATE(),
+    modified_on DATETIME,u
+    contact_json nvarchar(128000),
+    PRIMARY KEY(number)
+);
+
+[{'qa':1},{'gb':2}]
+insert into UserNode(name, number) values('rahul', 'bansal');
+
+drop table UserdNode;
+insert into UserdNode(name, number) values('rahul', 'bansal');
+select * from UserdNode;
+
+select node2.number as mutual_number
+from UserNode node1, knowsEdge edge1, knowsEdge edge2 ,UserNode node2, UserNode node3
+Where match(node1-(edge1)->node2-(edge2)->node3) and node1.number like "8392" and node3.number like ""
+
+"INSERT INTO finderdb.dbo.knowsEdge VALUES ((SELECT $node_id FROM finderdb.dbo.userNode WHERE "
+                       "number = ?), (SELECT $node_id FROM finderdb.dbo.userNode WHERE number = ?),?);"
+
+insert into knowsEdge values((select $node_id from userNode where number like ""),(select $node_id from userNode where number like ""),"yo")
