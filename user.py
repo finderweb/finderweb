@@ -97,7 +97,7 @@ def signup_user(number, name, self_signed=True):
         with open_db_connection(True) as cursor:
             cursor.execute(
                 'insert into finderdb.dbo.userNode(name,number,self_signed,contacts_synced,created_on, modified_on) '
-                'values(?,?,?,?,?)', name, number, self_signed, 0, datetime.datetime.now(), datetime.datetime.now())
+                'values(?,?,?,?,?,?)', name, number, self_signed, 0, datetime.datetime.now(), datetime.datetime.now())
     else:
         if not user["selfSigned"]:
             with open_db_connection(True) as cursor:
