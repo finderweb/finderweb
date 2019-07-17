@@ -1,7 +1,7 @@
 from flask import Flask, request
 import json
 
-from user import insert_user, insert_contacts, search_mutual, has_user_signup
+from user import signup_user, insert_contacts, search_mutual, has_user_signup
 
 app = Flask(__name__)
 
@@ -17,7 +17,6 @@ def throw_error(code, success, message):
 def return_json(mp):
     return json.dumps(mp)
 
-
 @app.route("/api/signup", methods=['POST'])
 def signup():
     request_json = request.json
@@ -29,7 +28,7 @@ def signup():
         return throw_error(-1, False, "Phone Number is None")
     else:
         number = request_json["number"]
-    return return_json(insert_user(name=name, number=number))
+    return return_json(signup_user(name=name, number=number))
 
 
 @app.route("/api/contacts", methods=['POST', 'GET'])

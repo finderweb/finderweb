@@ -1,7 +1,10 @@
 from database import open_db_connection
 import os
+import datetime
 
 db = os.environ['db']
+account_name = os.environ['accountName']
+account_key = os.environ['accountKey']
 userNode = db + '.dbo.' + 'UserNode'
 
 
@@ -20,6 +23,7 @@ def is_user_present(number):
 
 
 def has_user_signup(number):
+    number = trim_number(number)
     is_present, user = is_user_present(number)
     if not is_present:
         return {"number": number, "signedUp": False}
@@ -28,24 +32,53 @@ def has_user_signup(number):
     return {"number": number, "signedUp": False}
 
 
+# def insert_contacts_string(user, contact_json):
+#     # with open_db_connection(True) as cursor:
+#     #     cursor.execute("INSERT INTO finderdb.dbo.users('name','number','modified_on','contact_json') VALUES(?,?,?,?)",
+#     #                    user["name"], user["number"], datetime.datetime.now(), contact_json)
+#     queue_service.put_message("contacts", user["number"])
+
+def create_insert_node_query(name, number):
+    return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END "
+
+
+def convert_to_utf8(number):
+    utf = ""
+    for ch in number:
+        if ch == '0' or ch == '1' or ch == '2' or ch == '3' or ch == '4' or ch == '5' or ch == '6' or ch == '7' or ch == '8' or ch == '9':
+            utf = utf + ch
+    return utf
+
+
+def trim_number(number):
+    number = convert_to_utf8(number)
+    number = number.strip()
+    if number[0] == '9' and number[1] == '1':
+        return number[2::]
+    return number
+
+
 def insert_contacts(user, contacts):
+    user["number"] = trim_number(user["number"])
+    nodes_query = ""
+    edges_query = ""
     for contact in contacts:
-        insert_edge(user, contact)
-    return None
+        nodes_query += create_insert_node_query(contact["name"], trim_number(contact["number"]))
+    for contact in contacts:
+        edges_query += create_insert_edge_query(user, contact["name"], contact["number"])
+    execute_query(nodes_query)
+    execute_query(edges_query)
 
 
-def insert_edge(user, contact):
-    upsert(contact)
+def create_insert_edge_query(user, name, destination_number):
+    destination_number = trim_number(destination_number)
+    source_number = trim_number(user["number"])
+    return " IF not EXISTS ( select * from knowsEdge where source_destination like '" + source_number + destination_number + "') BEGIN insert into knowsEdge values((select $node_id from userNode where number like'" + source_number + "'),(select $node_id from userNode where number like '" + destination_number + "'),'" + name + "','" + source_number + destination_number + "') END "
+
+
+def execute_query(query):
     with open_db_connection(True) as cursor:
-        cursor.execute("INSERT INTO finderdb.dbo.knowsEdge VALUES ((SELECT $node_id FROM finderdb.dbo.userNode WHERE "
-                       "number = ?), (SELECT $node_id FROM finderdb.dbo.userNode WHERE number = ?),?);",
-                       user["number"], contact["number"], contact["name"])
-
-
-def upsert(contact):
-    is_present, user = is_user_present(contact["number"])
-    if not is_present:
-        insert_user_util(contact["number"], contact["name"], self_signed=False)
+        cursor.execute(query)
 
 
 def insert_user_util(name, number, self_signed):
@@ -54,14 +87,17 @@ def insert_user_util(name, number, self_signed):
                        self_signed)
 
 
-def insert_user(number, name, self_signed=True):
+# There will be a case where there are new contacts added,
+def signup_user(number, name, self_signed=True):
+    number = trim_number(number)
     if len(number) != 10:
         raise Exception("Phone Number must have length equal to 10")
     is_present, user = is_user_present(number)
     if not is_present:
         with open_db_connection(True) as cursor:
-            cursor.execute('insert into finderdb.dbo.userNode(name,number,self_signed) values(?,?,?)', name, number,
-                           self_signed)
+            cursor.execute(
+                'insert into finderdb.dbo.userNode(name,number,self_signed,contacts_synced,created_on, modified_on) '
+                'values(?,?,?,?,?)', name, number, self_signed, 0, datetime.datetime.now(), datetime.datetime.now())
     else:
         if not user["selfSigned"]:
             with open_db_connection(True) as cursor:
@@ -72,6 +108,8 @@ def insert_user(number, name, self_signed=True):
 
 
 def search_mutual(source_number, destination_number, length=1):
+    source_number = trim_number(source_number)
+    destination_number = trim_number(destination_number)
     results = []
     if length == 1:
         results = results + get_common_contacts_of_length_1(source_number, destination_number)
