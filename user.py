@@ -37,6 +37,8 @@ def has_user_signup(number):
 #     #     cursor.execute("INSERT INTO finderdb.dbo.users('name','number','modified_on','contact_json') VALUES(?,?,?,?)",
 #     #                    user["name"], user["number"], datetime.datetime.now(), contact_json)
 #     queue_service.put_message("contacts", user["number"])
+# (name,number,self_signed,contacts_synced,created_on, modified_on) '
+#                 'values(?,?,?,?,?,?)
 
 def create_insert_node_query(name, number):
     return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END "
@@ -55,6 +57,8 @@ def trim_number(number):
     number = number.strip()
     if number[0] == '9' and number[1] == '1':
         return number[2::]
+    if number[0] == '0':
+        return number[1:]
     return number
 
 
