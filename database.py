@@ -19,8 +19,8 @@ def open_db_connection(commit=False):
     try:
         yield cursor
     except pyodbc.DatabaseError as err:
-        error, = err.args
-        sys.stderr.write(error.message)
+        error = err.args[1]
+        sys.stderr.write(error)
         cursor.execute("ROLLBACK")
         raise err
     else:

@@ -122,7 +122,7 @@ def signup_user(number, name, self_signed=True):
     else:
         if not user["selfSigned"]:
             with open_db_connection(True) as cursor:
-                cursor.execute("update finderdb.dbo.userNode set self_singed=1 and name = ? where number like ?", name,
+                cursor.execute("update finderdb.dbo.userNode set self_signed=1 , name = ? where number like ?", name,
                                number)
     return {"number": number, "name": name, "selfSigned": True}
     # return is_user_present(number)
