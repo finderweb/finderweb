@@ -41,7 +41,10 @@ def has_user_signup(number):
 #                 'values(?,?,?,?,?,?)
 
 def create_insert_node_query(name, number):
-    return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END "
+    name = trim_name(name)
+    if len(name) > 240 or len(number) > 20:
+        return ""
+    return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END \n"
 
 
 def convert_to_utf8(number):
@@ -62,14 +65,26 @@ def trim_number(number):
     return number
 
 
+def trim_name(name):
+    fname = ""
+    for ch in name:
+        if 'a' <= ch <= 'z':
+            fname += ch
+        elif 'A' <= ch <= 'Z':
+            fname += ch
+        else:
+            fname += ' '
+    return fname
+
+
 def insert_contacts(user, contacts):
     user["number"] = trim_number(user["number"])
     nodes_query = ""
     edges_query = ""
     for contact in contacts:
-        nodes_query += create_insert_node_query(contact["name"], trim_number(contact["number"]))
+        nodes_query += create_insert_node_query(trim_name(contact["name"]), trim_number(contact["number"]))
     for contact in contacts:
-        edges_query += create_insert_edge_query(user, contact["name"], contact["number"])
+        edges_query += create_insert_edge_query(user, trim_name(contact["name"]), contact["number"])
     execute_query(nodes_query)
     execute_query(edges_query)
 
@@ -77,7 +92,9 @@ def insert_contacts(user, contacts):
 def create_insert_edge_query(user, name, destination_number):
     destination_number = trim_number(destination_number)
     source_number = trim_number(user["number"])
-    return " IF not EXISTS ( select * from knowsEdge where source_destination like '" + source_number + destination_number + "') BEGIN insert into knowsEdge values((select $node_id from userNode where number like'" + source_number + "'),(select $node_id from userNode where number like '" + destination_number + "'),'" + name + "','" + source_number + destination_number + "') END "
+    if len(destination_number) > 20 or len(source_number) > 20:
+        return ""
+    return " IF not EXISTS ( select * from knowsEdge where source_destination like '" + source_number + destination_number + "') BEGIN insert into knowsEdge values((select $node_id from userNode where number like'" + source_number + "'),(select $node_id from userNode where number like '" + destination_number + "'),'" + name + "','" + source_number + destination_number + "') END \n"
 
 
 def execute_query(query):
