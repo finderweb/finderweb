@@ -11,7 +11,7 @@ def throw_error(code, success, message):
         code: code,
         success: success,
         message: message
-    })
+    }), 500
 
 
 def return_json(mp):
