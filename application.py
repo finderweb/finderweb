@@ -17,6 +17,7 @@ def throw_error(code, success, message):
 def return_json(mp):
     return json.dumps(mp)
 
+
 @app.route("/api/signup", methods=['POST'])
 def signup():
     request_json = request.json

@@ -9,6 +9,7 @@ userNode = db + '.dbo.' + 'UserNode'
 
 
 def is_user_present(number):
+    number = trim_number(number)
     with open_db_connection() as cursor:
         cursor.execute('select user_id,name,number,self_signed from finderdb.dbo.UserNode where number like ?', number)
         row = cursor.fetchone()
