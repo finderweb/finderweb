@@ -51,7 +51,7 @@ def convert_to_utf8(number):
 def trim_number(number):
     number = convert_to_utf8(number)
     number = number.strip()
-    if len(number) == 0 or len(number) < 10:
+    if len(number) < 10:
         return number
     if number[0] == '9' and number[1] == '1':
         return number[2::]
@@ -78,9 +78,9 @@ def insert_contacts(user, contacts):
     edges_query = ""
     for contact in contacts:
         nodes_query += create_insert_node_query(trim_name(contact["name"]), trim_number(contact["number"]))
+    execute_query(nodes_query)
     for contact in contacts:
         edges_query += create_insert_edge_query(user, trim_name(contact["name"]), contact["number"])
-    execute_query(nodes_query)
     execute_query(edges_query)
 
 
