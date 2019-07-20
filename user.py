@@ -43,7 +43,7 @@ def has_user_signup(number):
 
 def create_insert_node_query(name, number):
     name = trim_name(name)
-    if len(name) > 240 or len(number) > 20:
+    if len(name) > 240 or len(number) > 20 or len(number) == 0:
         return ""
     return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END \n"
 
@@ -59,6 +59,8 @@ def convert_to_utf8(number):
 def trim_number(number):
     number = convert_to_utf8(number)
     number = number.strip()
+    if len(number) == 0 or len(number) < 10:
+        return number
     if number[0] == '9' and number[1] == '1':
         return number[2::]
     if number[0] == '0':
