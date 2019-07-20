@@ -35,7 +35,7 @@ def has_user_signup(number):
 
 def create_insert_node_query(name, number):
     name = trim_name(name)
-    if len(name) > 240 or len(number) > 20 or len(number) == 0:
+    if len(name) > 240 or len(number) > 20 or len(number) < 10:
         return ""
     return " IF not EXISTS( Select * from UserNode where number like '" + number + "') BEGIN insert into UserNode(name, number, self_signed) values('" + name + "','" + number + "', 0) END \n"
 
