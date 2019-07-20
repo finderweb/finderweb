@@ -181,7 +181,7 @@ def get_common_contacts_of_length_2(source_number, destination_number):
     results = []
     with open_db_connection() as cursor:
         cursor.execute("select node2.number as number1, node2.name as name1, node3.number as number2, node3.name as "
-                       "name2 as name from UserNode node1, knowsEdge edge1,knowsEdge edge2,knowsEdge edge3, UserNode "
+                       "name2 from UserNode node1, knowsEdge edge1,knowsEdge edge2,knowsEdge edge3, UserNode "
                        "node2, UserNode node3, UserNode node4 Where match(node1-(edge1)->node2-("
                        "edge2)->node3-(edge3)->node4) and node1.number like ? and node4.number like ?"
                        , source_number, destination_number)
