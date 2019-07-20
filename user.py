@@ -33,14 +33,6 @@ def has_user_signup(number):
     return {"number": number, "signedUp": False}
 
 
-# def insert_contacts_string(user, contact_json):
-#     # with open_db_connection(True) as cursor:
-#     #     cursor.execute("INSERT INTO finderdb.dbo.users('name','number','modified_on','contact_json') VALUES(?,?,?,?)",
-#     #                    user["name"], user["number"], datetime.datetime.now(), contact_json)
-#     queue_service.put_message("contacts", user["number"])
-# (name,number,self_signed,contacts_synced,created_on, modified_on) '
-#                 'values(?,?,?,?,?,?)
-
 def create_insert_node_query(name, number):
     name = trim_name(name)
     if len(name) > 240 or len(number) > 20 or len(number) == 0:
@@ -95,7 +87,7 @@ def insert_contacts(user, contacts):
 def create_insert_edge_query(user, name, destination_number):
     destination_number = trim_number(destination_number)
     source_number = trim_number(user["number"])
-    if len(destination_number) > 20 or len(source_number) > 20:
+    if len(destination_number) > 20 or len(source_number) > 20 or len(destination_number) < 10 or len(source_number) < 10:
         return ""
     return " IF not EXISTS ( select * from knowsEdge where source_destination like '" + source_number + destination_number + "') BEGIN insert into knowsEdge values((select $node_id from userNode where number like'" + source_number + "'),(select $node_id from userNode where number like '" + destination_number + "'),'" + name + "','" + source_number + destination_number + "') END \n"
 
