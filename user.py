@@ -190,7 +190,7 @@ def get_common_contacts_of_length_2(source_number, destination_number):
             edges = list()
             # edges.append(get_edges(source_number, source_number, 0))
             edges.append(get_edges(row.number1, row.name1, 1))
-            edges.append(get_edges(row.numer2, row.name2, 2))
+            edges.append(get_edges(row.number2, row.name2, 2))
             # edges.append(get_edges(destination_number, destination_number, 3))
             results.append(get_result_object(source_number, destination_number, edges))
     return results
