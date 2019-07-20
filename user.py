@@ -127,10 +127,10 @@ def search_mutual(source_number, destination_number, length=1):
     source_number = trim_number(source_number)
     destination_number = trim_number(destination_number)
     results = []
-    if length == 1:
-        results = results + get_common_contacts_of_length_1(source_number, destination_number)
-    if length == 2:
-        results = results + get_common_contacts_of_length_2(source_number, destination_number)
+    # if length == 1:
+    results = results + get_common_contacts_of_length_1(source_number, destination_number)
+    # if length == 2:
+    results = results + get_common_contacts_of_length_2(source_number, destination_number)
     if len(results) == 0:
         results = [{
             "sourceNumber": source_number,
